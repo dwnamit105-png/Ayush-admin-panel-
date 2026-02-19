@@ -6,30 +6,47 @@ app.secret_key = "supersecretkey123"
 ADMIN_USERNAME = "99YU5H"
 ADMIN_PASSWORD = "DWN"
 
-# ================= PREMIUM LOGIN PAGE =================
+# ================= LOGIN PAGE WITH VIDEO BACKGROUND =================
 LOGIN_PAGE = """
 <!DOCTYPE html>
 <html>
 <head>
 <title>AYUSH SHRIVASTAVA WEB - Admin Login</title>
 <style>
+
 body {
     margin:0;
     padding:0;
     font-family: 'Consolas', monospace;
-    background: linear-gradient(45deg, #000000, #0f0f0f, #000000);
-    background-size: 400% 400%;
-    animation: bgAnimation 10s infinite alternate;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
     color:white;
+    overflow:hidden;
 }
 
-@keyframes bgAnimation {
-    0% { background-position: left; }
-    100% { background-position: right; }
+/* Background Video */
+#bg-video {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+/* Dark Overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.6);
+    z-index: -1;
 }
 
 .login-box {
@@ -79,9 +96,14 @@ button:hover {
     color:red;
     margin-top:10px;
 }
+
 </style>
 </head>
 <body>
+
+<video autoplay muted loop id="bg-video">
+    <source src="/static/bg.mp4" type="video/mp4">
+</video>
 
 <div class="login-box">
 <h2>🔐 AYUSH SHRIVASTAVA WEB</h2>
@@ -97,12 +119,12 @@ button:hover {
 </html>
 """
 
-# ================= PREMIUM DASHBOARD =================
+# ================= DASHBOARD =================
 HTML_CONTENT = """
 <!DOCTYPE html>
 <html>
 <head>
-<title>AYUSH SHRIVASTAVA WEB - Dashboard</title>
+<title>Dashboard</title>
 <style>
 body {
     background:black;
@@ -186,9 +208,16 @@ def convo_server():
         return redirect(url_for("login"))
     return "<h1 style='color:cyan;text-align:center;'>🚀 CONVO SERVER Activated!</h1>"
 
+@app.route('/youtube-dl')
+def youtube_dl():
+    if not session.get("admin"):
+        return redirect(url_for("login"))
+    return "<h1 style='color:cyan;text-align:center;'>📥 YouTube Downloader Page</h1>"
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
