@@ -1,8 +1,7 @@
-from flask import Flask, render_template_string, request, redirect, session, url_for
-import os
+from flask import Flask, render_template_string, request, redirect, session
 
 app = Flask(__name__)
-app.secret_key = "super_secure_secret_key_change_this"
+app.secret_key = "change_this_secret_key_123"
 
 ADMIN_USERNAME = "99YU5H"
 ADMIN_PASSWORD = "DWN"
@@ -12,7 +11,7 @@ LOGIN_PAGE = """
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AYUSH SHRIVASTAVA WEB - Admin Login</title>
+<title>Admin Login</title>
 
 <style>
 *{
@@ -22,7 +21,7 @@ padding:0;
 }
 
 body{
-font-family:'Consolas',monospace;
+font-family:monospace;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -60,17 +59,17 @@ z-index:-1;
 background:rgba(0,0,0,0.75);
 padding:30px;
 border-radius:15px;
-box-shadow:0 0 25px #00ffff;
+box-shadow:0 0 25px cyan;
 text-align:center;
 width:90%;
 max-width:350px;
+z-index:2;
 }
 
 h2{
-color:#00ffff;
-text-shadow:0 0 15px #00ffff;
+color:cyan;
+text-shadow:0 0 15px cyan;
 margin-bottom:20px;
-font-size:20px;
 }
 
 input{
@@ -81,31 +80,22 @@ border:none;
 border-radius:8px;
 background:black;
 color:white;
-font-size:14px;
-box-shadow:0 0 10px #00ffff inset;
+box-shadow:0 0 10px cyan inset;
 }
 
 button{
 width:100%;
 padding:12px;
-background:#00ffff;
+background:cyan;
 border:none;
 border-radius:8px;
 font-weight:bold;
 cursor:pointer;
-font-size:14px;
-transition:0.3s;
-}
-
-button:hover{
-background:#00cccc;
-box-shadow:0 0 20px #00ffff;
 }
 
 .error{
 color:red;
 margin-top:10px;
-font-size:13px;
 }
 
 .sound-msg{
@@ -122,11 +112,11 @@ opacity:0.8;
 <body>
 
 <video id="bg-video" autoplay loop muted playsinline>
-<source src="{{ url_for('static', filename='bg.mp4') }}" type="video/mp4">
+<source src="/static/bg.mp4" type="video/mp4">
 </video>
 
 <div class="login-box">
-<h2>🔐 AYUSH SHRIVASTAVA WEB</h2>
+<h2>🔐 ADMIN PANEL</h2>
 <form method="POST">
 <input type="text" name="username" placeholder="Username" required>
 <input type="password" name="password" placeholder="Password" required>
@@ -165,33 +155,22 @@ font-family:monospace;
 text-align:center;
 padding:40px;
 }
-
 h1{
-color:#00ffff;
-text-shadow:0 0 20px #00ffff;
+color:cyan;
 margin-bottom:30px;
 }
-
-.btn{
+a{
 display:block;
 width:90%;
 max-width:300px;
 margin:15px auto;
 padding:15px;
-background:#00ffff;
+background:cyan;
 color:black;
 text-decoration:none;
 border-radius:10px;
 font-weight:bold;
-transition:0.3s;
-box-shadow:0 0 20px #00ffff;
 }
-
-.btn:hover{
-background:#00cccc;
-transform:scale(1.05);
-}
-
 .logout{
 background:red;
 color:white;
@@ -200,50 +179,35 @@ color:white;
 </head>
 <body>
 
-<h1>💖 AYUSH SHRIVASTAVA WEB 💖</h1>
+<h1>WELCOME ADMIN</h1>
 
-<a href="/convo-server" class="btn">🚀 CONVO SERVER</a>
-<a href="/youtube-dl" class="btn">📥 YOUTUBE DOWNLOADER</a>
-<a href="/logout" class="btn logout">🔓 LOGOUT</a>
+<a href="/logout" class="logout">LOGOUT</a>
 
 </body>
 </html>
 """
 
-@app.route("/login", methods=["GET","POST"])
+@app.route("/", methods=["GET","POST"])
 def login():
     error = ""
     if request.method == "POST":
         if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
             session["admin"] = True
-            return redirect("/")
+            return redirect("/dashboard")
         else:
-            error = "Invalid Username or Password!"
+            error = "Invalid Username or Password"
     return render_template_string(LOGIN_PAGE, error=error)
 
-@app.route("/")
-def home():
+@app.route("/dashboard")
+def dashboard():
     if not session.get("admin"):
-        return redirect("/login")
+        return redirect("/")
     return render_template_string(DASHBOARD)
-
-@app.route("/convo-server")
-def convo():
-    if not session.get("admin"):
-        return redirect("/login")
-    return "<h1 style='color:cyan;text-align:center;'>🚀 CONVO SERVER Activated!</h1>"
-
-@app.route("/youtube-dl")
-def yt():
-    if not session.get("admin"):
-        return redirect("/login")
-    return "<h1 style='color:cyan;text-align:center;'>📥 YouTube Downloader Page</h1>"
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/login")
+    return redirect("/")
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=10000)
