@@ -1,7 +1,8 @@
 from flask import Flask, render_template_string, request, redirect, session, url_for
+import os
 
 app = Flask(__name__)
-app.secret_key = "change_this_secret_key"
+app.secret_key = "super_secure_secret_key_change_this"
 
 ADMIN_USERNAME = "99YU5H"
 ADMIN_PASSWORD = "DWN"
@@ -28,7 +29,6 @@ align-items:center;
 height:100vh;
 color:white;
 overflow:hidden;
-cursor:pointer;
 background:black;
 }
 
@@ -41,10 +41,10 @@ width:100%;
 height:100%;
 object-fit:cover;
 z-index:-2;
-filter: blur(3px) brightness(0.6);
+filter: blur(4px) brightness(0.6);
 }
 
-/* Dark Overlay */
+/* Overlay */
 body::before{
 content:"";
 position:fixed;
@@ -64,7 +64,6 @@ box-shadow:0 0 25px #00ffff;
 text-align:center;
 width:90%;
 max-width:350px;
-z-index:2;
 }
 
 h2{
@@ -246,4 +245,5 @@ def logout():
     return redirect("/login")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
