@@ -6,16 +6,21 @@ app.secret_key = "supersecretkey123"
 ADMIN_USERNAME = "99YU5H"
 ADMIN_PASSWORD = "DWN"
 
-# ================= LOGIN PAGE =================
 LOGIN_PAGE = """
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AYUSH SHRIVASTAVA WEB - Admin Login</title>
+
 <style>
-body{
+*{
+box-sizing:border-box;
 margin:0;
 padding:0;
+}
+
+body{
 font-family:'Consolas',monospace;
 display:flex;
 justify-content:center;
@@ -23,20 +28,22 @@ align-items:center;
 height:100vh;
 color:white;
 overflow:hidden;
+cursor:pointer;
 }
 
-/* Video Background */
+/* Background Video */
 #bg-video{
 position:fixed;
-right:0;
-bottom:0;
-min-width:100%;
-min-height:100%;
+top:0;
+left:0;
+width:100%;
+height:100%;
 object-fit:cover;
 z-index:-2;
 filter: blur(3px) brightness(0.6);
 }
 
+/* Dark Overlay */
 body::before{
 content:"";
 position:fixed;
@@ -50,37 +57,43 @@ z-index:-1;
 
 .login-box{
 background:rgba(0,0,0,0.7);
-padding:40px;
+padding:30px;
 border-radius:15px;
 box-shadow:0 0 20px cyan,0 0 40px #00ffff;
 text-align:center;
-width:320px;
+width:90%;
+max-width:350px;
+z-index:2;
 }
 
 h2{
 color:#00ffff;
 text-shadow:0 0 10px #00ffff;
+margin-bottom:20px;
+font-size:20px;
 }
 
 input{
 width:100%;
-padding:10px;
+padding:12px;
 margin:10px 0;
 border:none;
 border-radius:8px;
 background:black;
 color:white;
+font-size:14px;
 box-shadow:0 0 10px #00ffff inset;
 }
 
 button{
 width:100%;
-padding:10px;
+padding:12px;
 background:#00ffff;
 border:none;
 border-radius:8px;
 font-weight:bold;
 cursor:pointer;
+font-size:14px;
 transition:0.3s;
 }
 
@@ -92,13 +105,24 @@ box-shadow:0 0 20px #00ffff;
 .error{
 color:red;
 margin-top:10px;
+font-size:13px;
+}
+
+.sound-msg{
+position:absolute;
+bottom:15px;
+width:100%;
+text-align:center;
+font-size:12px;
+opacity:0.8;
 }
 </style>
 </head>
+
 <body>
 
-<video autoplay muted loop id="bg-video">
-<source src="{{ url_for('static', filename='VID-20260215-WA0074.mp4') }}" type="video/mp4">
+<video id="bg-video" autoplay loop muted playsinline>
+<source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
 </video>
 
 <div class="login-box">
@@ -111,12 +135,22 @@ margin-top:10px;
 <div class="error">{{ error }}</div>
 </div>
 
+<div class="sound-msg">Tap anywhere to enable sound 🔊</div>
+
+<script>
+const video = document.getElementById("bg-video");
+
+document.body.addEventListener("click", function() {
+    video.muted = false;
+    video.play();
+}, { once: true });
+</script>
+
 </body>
 </html>
 """
 
-# ================= DASHBOARD =================
-HTML_CONTENT = """
+DASHBOARD = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -129,31 +163,24 @@ font-family:monospace;
 text-align:center;
 padding:40px;
 }
-
 h1{
 color:#00ffff;
 text-shadow:0 0 20px #00ffff;
 }
-
-.btn{
+a{
 display:block;
-width:300px;
+width:250px;
 margin:15px auto;
-padding:15px;
+padding:12px;
 background:#00ffff;
 color:black;
 text-decoration:none;
 border-radius:10px;
 font-weight:bold;
-transition:0.3s;
-box-shadow:0 0 20px #00ffff;
 }
-
-.btn:hover{
+a:hover{
 background:#00cccc;
-transform:scale(1.05);
 }
-
 .logout{
 background:red;
 color:white;
@@ -163,49 +190,33 @@ color:white;
 <body>
 
 <h1>💖 AYUSH SHRIVASTAVA WEB 💖</h1>
-
-<a href="/convo-server" class="btn">🚀 CONVO SERVER</a>
-<a href="/youtube-dl" class="btn">📥 YOUTUBE DOWNLOADER</a>
-<a href="/logout" class="btn logout">🔓 LOGOUT</a>
+<a href="/logout" class="logout">🔓 LOGOUT</a>
 
 </body>
 </html>
 """
 
-# ================= ROUTES =================
-@app.route('/login', methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def login():
     error = ""
     if request.method == "POST":
         if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
             session["admin"] = True
-            return redirect(url_for("home"))
+            return redirect("/dashboard")
         else:
             error = "Invalid Username or Password!"
     return render_template_string(LOGIN_PAGE, error=error)
 
-@app.route('/')
-def home():
+@app.route("/dashboard")
+def dashboard():
     if not session.get("admin"):
-        return redirect(url_for("login"))
-    return render_template_string(HTML_CONTENT)
+        return redirect("/")
+    return render_template_string(DASHBOARD)
 
-@app.route('/convo-server')
-def convo_server():
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-    return "<h1 style='color:cyan;text-align:center;'>🚀 CONVO SERVER Activated!</h1>"
-
-@app.route('/youtube-dl')
-def youtube_dl():
-    if not session.get("admin"):
-        return redirect(url_for("login"))
-    return "<h1 style='color:cyan;text-align:center;'>📥 YouTube Downloader Page</h1>"
-
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
