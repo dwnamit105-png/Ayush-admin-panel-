@@ -1,7 +1,7 @@
 from flask import Flask, render_template_string, request, redirect, session, url_for
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey123"
+app.secret_key = "change_this_secret_key"
 
 ADMIN_USERNAME = "99YU5H"
 ADMIN_PASSWORD = "DWN"
@@ -29,6 +29,7 @@ height:100vh;
 color:white;
 overflow:hidden;
 cursor:pointer;
+background:black;
 }
 
 /* Background Video */
@@ -56,10 +57,10 @@ z-index:-1;
 }
 
 .login-box{
-background:rgba(0,0,0,0.7);
+background:rgba(0,0,0,0.75);
 padding:30px;
 border-radius:15px;
-box-shadow:0 0 20px cyan,0 0 40px #00ffff;
+box-shadow:0 0 25px #00ffff;
 text-align:center;
 width:90%;
 max-width:350px;
@@ -68,7 +69,7 @@ z-index:2;
 
 h2{
 color:#00ffff;
-text-shadow:0 0 10px #00ffff;
+text-shadow:0 0 15px #00ffff;
 margin-bottom:20px;
 font-size:20px;
 }
@@ -122,7 +123,7 @@ opacity:0.8;
 <body>
 
 <video id="bg-video" autoplay loop muted playsinline>
-<source src="{{ url_for('static', filename='video.mp4') }}" type="video/mp4">
+<source src="{{ url_for('static', filename='bg.mp4') }}" type="video/mp4">
 </video>
 
 <div class="login-box">
@@ -154,7 +155,9 @@ DASHBOARD = """
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
+
 <style>
 body{
 background:black;
@@ -163,24 +166,33 @@ font-family:monospace;
 text-align:center;
 padding:40px;
 }
+
 h1{
 color:#00ffff;
 text-shadow:0 0 20px #00ffff;
+margin-bottom:30px;
 }
-a{
+
+.btn{
 display:block;
-width:250px;
+width:90%;
+max-width:300px;
 margin:15px auto;
-padding:12px;
+padding:15px;
 background:#00ffff;
 color:black;
 text-decoration:none;
 border-radius:10px;
 font-weight:bold;
+transition:0.3s;
+box-shadow:0 0 20px #00ffff;
 }
-a:hover{
+
+.btn:hover{
 background:#00cccc;
+transform:scale(1.05);
 }
+
 .logout{
 background:red;
 color:white;
@@ -190,33 +202,48 @@ color:white;
 <body>
 
 <h1>💖 AYUSH SHRIVASTAVA WEB 💖</h1>
-<a href="/logout" class="logout">🔓 LOGOUT</a>
+
+<a href="/convo-server" class="btn">🚀 CONVO SERVER</a>
+<a href="/youtube-dl" class="btn">📥 YOUTUBE DOWNLOADER</a>
+<a href="/logout" class="btn logout">🔓 LOGOUT</a>
 
 </body>
 </html>
 """
 
-@app.route("/", methods=["GET","POST"])
+@app.route("/login", methods=["GET","POST"])
 def login():
     error = ""
     if request.method == "POST":
         if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
             session["admin"] = True
-            return redirect("/dashboard")
+            return redirect("/")
         else:
             error = "Invalid Username or Password!"
     return render_template_string(LOGIN_PAGE, error=error)
 
-@app.route("/dashboard")
-def dashboard():
+@app.route("/")
+def home():
     if not session.get("admin"):
-        return redirect("/")
+        return redirect("/login")
     return render_template_string(DASHBOARD)
+
+@app.route("/convo-server")
+def convo():
+    if not session.get("admin"):
+        return redirect("/login")
+    return "<h1 style='color:cyan;text-align:center;'>🚀 CONVO SERVER Activated!</h1>"
+
+@app.route("/youtube-dl")
+def yt():
+    if not session.get("admin"):
+        return redirect("/login")
+    return "<h1 style='color:cyan;text-align:center;'>📥 YouTube Downloader Page</h1>"
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect("/login")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
