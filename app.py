@@ -6,103 +6,99 @@ app.secret_key = "supersecretkey123"
 ADMIN_USERNAME = "99YU5H"
 ADMIN_PASSWORD = "DWN"
 
-# ================= LOGIN PAGE WITH VIDEO BACKGROUND =================
+# ================= LOGIN PAGE =================
 LOGIN_PAGE = """
 <!DOCTYPE html>
 <html>
 <head>
 <title>AYUSH SHRIVASTAVA WEB - Admin Login</title>
 <style>
-
-body {
-    margin:0;
-    padding:0;
-    font-family: 'Consolas', monospace;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    color:white;
-    overflow:hidden;
+body{
+margin:0;
+padding:0;
+font-family:'Consolas',monospace;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+color:white;
+overflow:hidden;
 }
 
-/* Background Video */
-#bg-video {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    object-fit: cover;
-    z-index: -2;
+/* Video Background */
+#bg-video{
+position:fixed;
+right:0;
+bottom:0;
+min-width:100%;
+min-height:100%;
+object-fit:cover;
+z-index:-2;
+filter: blur(3px) brightness(0.6);
 }
 
-/* Dark Overlay */
-body::before {
-    content: "";
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.6);
-    z-index: -1;
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:-1;
 }
 
-.login-box {
-    background: rgba(0,0,0,0.7);
-    padding:40px;
-    border-radius:15px;
-    box-shadow: 0 0 20px cyan, 0 0 40px #00ffff;
-    text-align:center;
-    width:300px;
+.login-box{
+background:rgba(0,0,0,0.7);
+padding:40px;
+border-radius:15px;
+box-shadow:0 0 20px cyan,0 0 40px #00ffff;
+text-align:center;
+width:320px;
 }
 
-h2 {
-    margin-bottom:20px;
-    color:#00ffff;
-    text-shadow:0 0 10px #00ffff, 0 0 20px #00ffff;
+h2{
+color:#00ffff;
+text-shadow:0 0 10px #00ffff;
 }
 
-input {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:none;
-    border-radius:8px;
-    outline:none;
-    background:black;
-    color:white;
-    box-shadow:0 0 10px #00ffff inset;
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+background:black;
+color:white;
+box-shadow:0 0 10px #00ffff inset;
 }
 
-button {
-    width:100%;
-    padding:10px;
-    background:#00ffff;
-    border:none;
-    border-radius:8px;
-    font-weight:bold;
-    cursor:pointer;
-    transition:0.3s;
+button{
+width:100%;
+padding:10px;
+background:#00ffff;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
 }
 
-button:hover {
-    background:#00cccc;
-    box-shadow:0 0 20px #00ffff;
+button:hover{
+background:#00cccc;
+box-shadow:0 0 20px #00ffff;
 }
 
-.error {
-    color:red;
-    margin-top:10px;
+.error{
+color:red;
+margin-top:10px;
 }
-
 </style>
 </head>
 <body>
 
 <video autoplay muted loop id="bg-video">
-    <source src="/static/bg.mp4" type="video/mp4">
+<source src="{{ url_for('static', filename='romantic.mp4') }}" type="video/mp4">
 </video>
 
 <div class="login-box">
@@ -126,49 +122,41 @@ HTML_CONTENT = """
 <head>
 <title>Dashboard</title>
 <style>
-body {
-    background:black;
-    color:white;
-    font-family:monospace;
-    text-align:center;
-    padding:40px;
+body{
+background:black;
+color:white;
+font-family:monospace;
+text-align:center;
+padding:40px;
 }
 
-h1 {
-    color:#00ffff;
-    text-shadow:0 0 15px #00ffff, 0 0 30px #00ffff;
-    margin-bottom:40px;
+h1{
+color:#00ffff;
+text-shadow:0 0 20px #00ffff;
 }
 
-.btn {
-    display:block;
-    width:300px;
-    margin:15px auto;
-    padding:15px;
-    background:#00ffff;
-    color:black;
-    text-decoration:none;
-    border-radius:10px;
-    font-weight:bold;
-    transition:0.3s;
-    box-shadow:0 0 20px #00ffff;
+.btn{
+display:block;
+width:300px;
+margin:15px auto;
+padding:15px;
+background:#00ffff;
+color:black;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+transition:0.3s;
+box-shadow:0 0 20px #00ffff;
 }
 
-.btn:hover {
-    background:#00cccc;
-    transform:scale(1.05);
-    box-shadow:0 0 40px #00ffff;
+.btn:hover{
+background:#00cccc;
+transform:scale(1.05);
 }
 
-.logout {
-    background:red;
-    color:white;
-    box-shadow:0 0 20px red;
-}
-
-.logout:hover {
-    background:#cc0000;
-    box-shadow:0 0 40px red;
+.logout{
+background:red;
+color:white;
 }
 </style>
 </head>
@@ -219,5 +207,5 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
