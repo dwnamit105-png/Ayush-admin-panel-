@@ -97,9 +97,7 @@ margin-top:10px;
 </head>
 <body>
 
-<video autoplay muted loop id="bg-video">
-<source src="{{ url_for('static', filename='romantic.mp4') }}" type="video/mp4">
-</video>
+<source src="{{ url_for('static', filename='VID-20260215-WA0074.mp4') }}" type="video/mp4">
 
 <div class="login-box">
 <h2>🔐 AYUSH SHRIVASTAVA WEB</h2>
