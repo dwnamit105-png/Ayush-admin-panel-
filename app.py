@@ -1,4 +1,5 @@
 from flask import Flask, render_template_string, request, redirect, session
+import os
 
 app = Flask(__name__)
 app.secret_key = "change_this_secret_key_123"
@@ -34,16 +35,19 @@ background:black;
 /* Background Video */
 #bg-video{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+top:50%;
+left:50%;
+min-width:100%;
+min-height:100%;
+width:auto;
+height:auto;
+transform:translate(-50%,-50%);
 object-fit:cover;
 z-index:-2;
-filter: blur(4px) brightness(0.6);
+filter: blur(1.5px) brightness(0.85);
 }
 
-/* Overlay */
+/* Light Overlay */
 body::before{
 content:"";
 position:fixed;
@@ -51,24 +55,34 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.5);
+background:rgba(0,0,0,0.25);
 z-index:-1;
 }
 
+/* Mobile Fix */
+@media (max-width:768px){
+#bg-video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+}
+
+/* Glass Login Box */
 .login-box{
-background:rgba(0,0,0,0.75);
+background:rgba(0,0,0,0.55);
 padding:30px;
 border-radius:15px;
-box-shadow:0 0 25px cyan;
+box-shadow:0 0 20px cyan;
 text-align:center;
 width:90%;
 max-width:350px;
-z-index:2;
+backdrop-filter: blur(3px);
 }
 
 h2{
 color:cyan;
-text-shadow:0 0 15px cyan;
+text-shadow:0 0 10px cyan;
 margin-bottom:20px;
 }
 
@@ -78,7 +92,7 @@ padding:12px;
 margin:10px 0;
 border:none;
 border-radius:8px;
-background:black;
+background:rgba(0,0,0,0.6);
 color:white;
 box-shadow:0 0 10px cyan inset;
 }
@@ -104,7 +118,7 @@ bottom:15px;
 width:100%;
 text-align:center;
 font-size:12px;
-opacity:0.8;
+opacity:0.9;
 }
 </style>
 </head>
@@ -112,7 +126,7 @@ opacity:0.8;
 <body>
 
 <video id="bg-video" autoplay loop muted playsinline>
-<source src="/static/VID-20260215-WA0074.mp4" type="video/mp4">
+<source src="/static/bg.mp4" type="video/mp4">
 </video>
 
 <div class="login-box">
@@ -146,7 +160,6 @@ DASHBOARD = """
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
-
 <style>
 body{
 background:black;
@@ -180,7 +193,6 @@ color:white;
 <body>
 
 <h1>WELCOME ADMIN</h1>
-
 <a href="/logout" class="logout">LOGOUT</a>
 
 </body>
@@ -210,4 +222,5 @@ def logout():
     return redirect("/")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
